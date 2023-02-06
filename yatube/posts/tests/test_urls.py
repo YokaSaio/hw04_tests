@@ -1,9 +1,9 @@
+from http import HTTPStatus
+
 from django.test import TestCase, Client
 from django.urls import reverse
 
 from ..models import Post, User, Group
-
-from http import HTTPStatus
 
 
 class StaticURLTests(TestCase):
@@ -37,7 +37,7 @@ class StaticURLTests(TestCase):
         cls.url_names_https_status_auth = {
             '/': HTTPStatus.OK,
             f'/group/{cls.group.slug}/': HTTPStatus.OK,
-            f'/profile/{cls.author.username}': HTTPStatus.OK,
+            f'/profile/{cls.author.username}/': HTTPStatus.OK,
             '/unexciting_page/': HTTPStatus.NOT_FOUND
         }
 
