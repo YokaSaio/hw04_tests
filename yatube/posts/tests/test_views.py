@@ -1,11 +1,11 @@
 from django import forms
+
 from django.test import Client, TestCase
 from django.http.response import HttpResponse
 from django.urls import reverse
 
 from ..models import Group, Post, User
-
-POSTS_PER_PAGE = 10
+from yatube.settings import POSTS_PER_PAGE
 
 
 class PostViewTests(TestCase):

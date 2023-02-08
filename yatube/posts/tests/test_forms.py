@@ -1,7 +1,9 @@
 from django.test import Client, TestCase
 from django.urls import reverse
 
-from ..models import Group, Post, User
+from http import HTTPStatus
+
+from ..models import Post, User, Group
 
 
 class PostFormTests(TestCase):
@@ -39,17 +41,23 @@ class PostFormTests(TestCase):
         }
         response = self.authorized_client.post(
             reverse('posts:post_create'),
-            data=form_data
+            data=form_data,
+            follow=True
+        )
+        self.assertRedirects(
+            response,
+            reverse('posts:profile', kwargs={'username': self.author.username})
         )
         self.assertEqual(
             Post.objects.all().count(),
             post_count + 1,
             'Пост не сохранен в базу данных!'
         )
-        self.assertRedirects(
-            response,
-            reverse('posts:profile', args=[self.author.username]),
-        )
+        self.assertEqual(response.status_code, HTTPStatus.OK)
+        post = Post.objects.latest('id')
+        self.assertTrue(post.text == form_data['text'])
+        self.assertTrue(post.author == self.author)
+        self.assertTrue(post.group_id == form_data['group'])
 
     def test_edit_post_form(self):
         """При отправке формы изменяется пост в базе данных.
@@ -61,20 +69,10 @@ class PostFormTests(TestCase):
         }
         response = self.authorized_client.post(
             reverse('posts:post_edit', args=[self.post.id]),
-            data=form_data
+            data=form_data,
+            follow=True
         )
-        modified_post = Post.objects.get(id=self.post.id)
-        self.assertNotEqual(
-            modified_post.text,
-            self.post.text,
-            'Текст поста не изменился!'
-        )
-        self.assertNotEqual(
-            modified_post.group,
-            self.post.group,
-            'Группа у поста не изменилась!'
-        )
-        self.assertRedirects(
-            response,
-            reverse('posts:post_detail', args=[self.post.id]),
-        )
+        self.assertEqual(response.status_code, HTTPStatus.OK)
+        post = Post.objects.get(id=self.post.id)
+        self.assertEqual(post.text, form_data['text'])
+        self.assertEqual(post.group_id, form_data['group'])
