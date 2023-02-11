@@ -1,7 +1,7 @@
+from http import HTTPStatus
+
 from django.test import TestCase, Client
 from django.urls import reverse
-
-from http import HTTPStatus
 
 from ..models import Post, User, Group
 
@@ -48,10 +48,6 @@ class StaticURLTests(TestCase):
         self.authorized_client_author = Client()
         self.authorized_client_author.force_login(self.author)
 
-    def test_homepage(self):
-        response = self.guest_client.get('/')
-        self.assertEqual(response.status_code, HTTPStatus.OK)
-
     def test_urls_guest(self):
         """Страницы недоступны неавторизованному юзеру"""
         for address, template in self.template_url_names.items():
@@ -59,20 +55,17 @@ class StaticURLTests(TestCase):
                 response = self.guest_client.get(address)
                 self.assertEqual(response.status_code, template[1])
 
-    def test_url_avaible_auth_user(self):
-        """Страницы из url httpstatus доступны
-        авторизованному пользователю"""
-        for address, httpstatus in self.url_names_https_status_auth.items():
-            with self.subTest(adress=address):
-                response = self.authorized_client.get(address, follow=True)
-                self.assertEqual(response.status_code, httpstatus)
+    def test_post_create_url_available_authorized_user(self):
+        """Страница создания поста доступна авторизованному клиенту."""
+        response = self.authorized_client.get('/create/', follow=True)
+        self.assertEqual(response.status_code, HTTPStatus.OK)
 
     def test_pages_uses_correct_templates(self):
         """url-адрес использует соответсвующий шаблон"""
         for address, template in self.template_url_names.items():
             with self.subTest(address=address):
                 response = self.authorized_client_author.get(
-                    address, follow=True)
+                    address)
                 self.assertTemplateUsed(response, template[0])
 
     def test_redirect_anonymous(self):

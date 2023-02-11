@@ -83,8 +83,8 @@ Yatube - это социальная сеть с авторизацией, пе�
 
    ```python
    cd yatube
-   python manage.py makemigrations
-   python manage.py migrate
+   python yatube/manage.py makemigrations
+   python yatube/manage.py migrate
    ```
 
 7. Запустить проект локально:
@@ -104,6 +104,12 @@ Yatube - это социальная сеть с авторизацией, пе�
    # адрес панели администратора
    http://127.0.0.1:8000/admin
    ```
+   
+9. Запустит все тесты проекта:
+
+  ```python
+python3 yatube/manage.py test
+```
 
 ### Автор
 - [Владимиров Сергей](https://github.com/YokaSaio/yatube_project)

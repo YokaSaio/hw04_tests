@@ -1,11 +1,10 @@
 from django import forms
-
+from django.conf import settings
 from django.test import Client, TestCase
 from django.http.response import HttpResponse
 from django.urls import reverse
 
 from ..models import Group, Post, User
-from yatube.settings import POSTS_PER_PAGE
 
 
 class PostViewTests(TestCase):
@@ -65,14 +64,13 @@ class PostViewTests(TestCase):
                 response = self.authorized_client_1.get(reverse_name)
                 self.assertTemplateUsed(response, template)
 
-    def test_home_page_show_correct_context(self):
-        """Шаблон index сформирован с правильным контекстом."""
-        response = self.authorized_client_1.get(reverse('posts:index'))
-        posts_from_context = response.context.get('page_obj').object_list
-        expected_posts = list(Post.objects.all())
-        self.assertEqual(posts_from_context, expected_posts,
-                         'Главная страница выводит не все посты!'
-                         )
+    def test_index_show_correct_context(self):
+        """Шаблон index сформирован с правильным контекстом"""
+        response = self.authorized_client.get(reverse('index'))
+        page1 = response.context.get('page')
+        page_range = response.context.get('paginator').page_range
+        self.assertEqual(len(page1), 10)
+        self.assertEqual(len(page_range), 2)
 
     def test_group_list_page_show_correct_context(self):
         """Шаблон group_list сформирован с правильным контекстом."""
@@ -178,15 +176,8 @@ class PaginatorViewsTest(TestCase):
         )
 
     def setUp(self):
-        """Создаем клиента и 15 постов."""
-        self.client = Client()
-        self.number_create_posts = 15
-        posts = []
-        for i in range(self.number_create_posts):
-            posts.append(Post.objects.create(
-                text=f'test_text_{i}',
-                author=self.author,
-                group=self.group))
+        self.authorized_client = Client()
+        self.authorized_client.force_login(self.user)
 
     def test_index_page(self):
         """Проверяет пагинацию главной страницы."""
