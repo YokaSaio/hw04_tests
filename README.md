@@ -83,8 +83,8 @@ Yatube - это социальная сеть с авторизацией, пе�
 
    ```python
    cd yatube
-   python yatube/manage.py makemigrations
-   python yatube/manage.py migrate
+   python manage.py makemigrations
+   python manage.py migrate
    ```
 
 7. Запустить проект локально:
@@ -99,7 +99,7 @@ Yatube - это социальная сеть с авторизацией, пе�
 8. Зарегистирировать суперпользователя Django:
 
    ```python
-   python yatube/manage.py createsuperuser
+   python manage.py createsuperuser
 
    # адрес панели администратора
    http://127.0.0.1:8000/admin
@@ -108,7 +108,7 @@ Yatube - это социальная сеть с авторизацией, пе�
 9. Запустит все тесты проекта:
 
   ```python
-python3 yatube/manage.py test
+python3 manage.py test
 ```
 
 ### Автор

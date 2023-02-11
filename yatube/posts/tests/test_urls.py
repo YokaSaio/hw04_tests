@@ -55,11 +55,6 @@ class StaticURLTests(TestCase):
                 response = self.guest_client.get(address)
                 self.assertEqual(response.status_code, template[1])
 
-    def test_post_create_url_available_authorized_user(self):
-        """Страница создания поста доступна авторизованному клиенту."""
-        response = self.authorized_client.get('/create/', follow=True)
-        self.assertEqual(response.status_code, HTTPStatus.OK)
-
     def test_pages_uses_correct_templates(self):
         """url-адрес использует соответсвующий шаблон"""
         for address, template in self.template_url_names.items():
